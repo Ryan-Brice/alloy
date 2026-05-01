@@ -1,5 +1,10 @@
 {{- if .Values.rbac.create }}
-  {{- if .Values.rbac.namespaces }}
+  {{- if and (not .Values.rbac.rules) (not .Values.rbac.clusterRules) }}
+    {{- fail "RBAC (Role Based Access Control) rules enabled but no rules provided. Please provide at least one rule in rbac.rules or rbac.clusterRules, or disable RBAC creation." }}
+  {{- else if and .Values.rbac.rules (not .Values.rbac.namespaces) }}
+    {{- fail "Namespaced RBAC (Role Based Access Control) rules defined without specifying namespaces. Please provide at least one namespace or move the rules to clusterRules." }}
+  {{- end }}
+  {{- if and .Values.rbac.namespaces .Values.rbac.rules }}
     {{- range $namespace := .Values.rbac.namespaces }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -35,6 +40,7 @@ subjects:
     namespace: {{ include "alloy.namespace" $ }}
     {{- end }}
   {{- else }}
+  {{- if .Values.rbac.clusterRules }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -44,8 +50,7 @@ metadata:
     {{- include "alloy.labels" . | nindent 4 }}
     app.kubernetes.io/component: rbac
 rules:
-  {{- if or .Values.rbac.rules .Values.rbac.clusterRules }}
-  {{- .Values.rbac.rules | toYaml | nindent 2 }}
+  {{- if .Values.rbac.clusterRules }}
   {{- .Values.rbac.clusterRules | toYaml | nindent 2 }}
   {{- else }}
   []
@@ -66,5 +71,6 @@ subjects:
   - kind: ServiceAccount
     name: {{ include "alloy.serviceAccountName" . }}
     namespace: {{ include "alloy.namespace" . }}
+  {{- end }}
   {{- end }}
 {{- end }}
