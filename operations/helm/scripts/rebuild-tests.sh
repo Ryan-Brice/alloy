@@ -29,8 +29,7 @@ done
 CURRENT_DIR_NAME=${PWD##*/}
 HELM_DIR="operations/helm"
 
-if [ "${CURRENT_DIR_NAME}" == "helm" ]
-then
+if [ "${CURRENT_DIR_NAME}" == "helm" ]; then
   HELM_DIR="."
 fi
-  yamllint --config-file=${HELM_DIR}/lintconf.yaml ${HELM_DIR}/tests
+yamllint --config-file=${HELM_DIR}/lintconf.yaml ${HELM_DIR}/tests
