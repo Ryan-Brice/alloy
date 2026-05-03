@@ -1,8 +1,8 @@
-# Specify the namespaces for Roles and RoleBindings
+# Test case for RBAC rules defined without namespaces
+# Note that this should fail to render due to the validation in the template, which is the point of this test case.
 rbac:
   create: true
-  namespaces:
-    - default
+  namespaces: []
   rules:
     # -- Rules required for the `discovery.kubernetes` component.
     - apiGroups: ["", "discovery.k8s.io", "networking.k8s.io"]

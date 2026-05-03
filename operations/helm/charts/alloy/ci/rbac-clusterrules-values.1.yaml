@@ -1,9 +1,9 @@
-# Specify the namespaces for Roles and RoleBindings
+# Test case for RBAC cluster rules
 rbac:
   create: true
-  namespaces:
-    - default
-  rules:
+  namespaces: []
+  rules: []
+  clusterRules:
     # -- Rules required for the `discovery.kubernetes` component.
     - apiGroups: ["", "discovery.k8s.io", "networking.k8s.io"]
       resources: ["endpoints", "endpointslices", "ingresses", "nodes", "nodes/proxy", "nodes/metrics", "pods", "services"]
