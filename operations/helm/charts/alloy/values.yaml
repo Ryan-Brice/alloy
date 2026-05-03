@@ -159,12 +159,12 @@ rbac:
   # -- Whether to create RBAC resources for Alloy.
   create: true
 
-  # -- If set, only create Roles and RoleBindings in the given list of namespaces, rather than ClusterRoles and
-  # ClusterRoleBindings. If not using ClusterRoles, bear in mind that Alloy will not be able to discover cluster-scoped
-  # resources such as Nodes.
+  # -- If set and `rbac.rules` has a list of values, only create Roles and RoleBindings for the given list of namespaces.
+  # If empty, the chart's namespace is used for the generated Role and RoleBinding resources.
+  # Note: If `rbac.rules` is empty, this field is ignored and no Roles or RoleBindings are created.
   namespaces: []
 
-  # -- The rules to create for the ClusterRole or Role objects.
+  # -- The rules to create for Role objects.
   rules:
     # -- Rules required for the `discovery.kubernetes` component.
     - apiGroups: ["", "discovery.k8s.io", "networking.k8s.io"]
@@ -203,7 +203,9 @@ rbac:
       resources: ["replicasets"]
       verbs: ["get", "list", "watch"]
 
-  # -- The rules to create for the ClusterRole objects.
+  # -- The rules to create for ClusterRole objects. This is separate from `rules` to allow for better security practices by only
+  # granting cluster-wide permissions for needed resources. If empty, no ClusterRoles or ClusterRoleBindings are created.
+  # Note: If `clusterRoles` is empty, Alloy will not be able to discover cluster-scoped resources such as Nodes.
   clusterRules:
     # -- Rules required for the Nodes role in the `discovery.kubernetes` component.
     - apiGroups: [""]
